@@ -9,6 +9,11 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class MercedesManualApplication {
     public static void main(String[] args) {
+        String port = System.getenv("PORT");
+        System.out.println("PORT from env: " + port); // Debug
+        if (port == null) {
+            System.out.println("WARNING: PORT env var not set, defaulting to 8080");
+        }
         SpringApplication.run(MercedesManualApplication.class, args);
     }
 
@@ -16,7 +21,9 @@ public class MercedesManualApplication {
     public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> webServerFactoryCustomizer() {
         return factory -> {
             String port = System.getenv("PORT");
-            factory.setPort(port != null ? Integer.parseInt(port) : 8080);
+            int effectivePort = (port != null && !port.isEmpty()) ? Integer.parseInt(port) : 8080;
+            System.out.println("Setting Tomcat port to: " + effectivePort); // Debug
+            factory.setPort(effectivePort);
         };
     }
 }
